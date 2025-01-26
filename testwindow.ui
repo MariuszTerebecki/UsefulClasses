@@ -23,8 +23,32 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionSaveQSS"/>
+    <addaction name="actionLoadQSS"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionSaveQSS">
+   <property name="text">
+    <string>Save QSS</string>
+   </property>
+  </action>
+  <action name="actionLoadQSS">
+   <property name="text">
+    <string>Load QSS</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

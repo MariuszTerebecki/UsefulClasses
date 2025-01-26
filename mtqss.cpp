@@ -1,11 +1,12 @@
 #include "mtqss.h"
+#include <QRegularExpression>
 
 /**
  * @brief Constructs an MTQss object with a parent widget.
  * @param parent The parent widget on which the QSS operations will be performed.
  */
 MTQss::MTQss(QWidget* parent)
-    : QObject(parent), m_parentWidget(parent) {}
+    : QObject(parent) {}
 
 /**
  * @brief Exports QSS styles for the given widget and its children.
@@ -13,7 +14,7 @@ MTQss::MTQss(QWidget* parent)
  * @return True if the export was successful, false otherwise.
  */
 bool MTQss::exportQss(const QString& fileName) {
-    if (!m_parentWidget) {
+    if (!parent()) {
         qWarning() << tr("Parent widget is null.");
         return false;
     }
@@ -27,22 +28,33 @@ bool MTQss::exportQss(const QString& fileName) {
     QTextStream out(&file);
 
     // Recursive scan for child widgets
-    QList<QWidget*> widgets = m_parentWidget->findChildren<QWidget*>();
-    widgets.prepend(m_parentWidget); // Include the parent widget
+    QList<QWidget*> widgets = parent()->findChildren<QWidget*>();
+    widgets.prepend(qobject_cast<QWidget *>(parent())); // Include the parent widget
 
     for (QWidget* widget : widgets) {
         QString className = widget->metaObject()->className();
         QString objectName = widget->objectName();
+        QString styleSheet = widget->styleSheet();
 
+        // Write object-specific styles
         if (!objectName.isEmpty()) {
             out << "#" << objectName << " {\n";
-            out << "    /* Add your styles here */\n";
+            if (!styleSheet.isEmpty()) {
+                out << "    " << styleSheet << "\n";
+            } else {
+                out << "    \n";
+            }
             out << "}\n\n";
         }
 
+        // Write class-specific styles
         if (!className.isEmpty()) {
             out << className << " {\n";
-            out << "    /* Add your styles here */\n";
+            if (!styleSheet.isEmpty()) {
+                out << "    " << styleSheet << "\n";
+            } else {
+                out << "    \n";
+            }
             out << "}\n\n";
         }
     }
@@ -76,11 +88,43 @@ bool MTQss::importQss(const QString& fileName) {
     QString styleSheet = in.readAll();
     file.close();
 
-    if (m_parentWidget) {
-        m_parentWidget->setStyleSheet(styleSheet);
-        return true;
+    QWidget *parent = qobject_cast<QWidget *>(this->parent());
+
+    if (!parent) {
+        qWarning() << tr("Parent widget is null. Cannot apply styles.");
+        return false;
     }
 
-    qWarning() << tr("Parent widget is null. Cannot apply styles.");
-    return false;
+    // Parse the QSS file and handle styles
+    QRegularExpression regex(R"(#(\w+)\s*{([\s\S]*?)}|(\w+)\s*{([\s\S]*?)})");
+    QRegularExpressionMatchIterator it = regex.globalMatch(styleSheet);
+
+    while (it.hasNext()) {
+        QRegularExpressionMatch match = it.next();
+
+        QString objectName = match.captured(1); // Object-specific selector
+        QString objectStyles = match.captured(2);
+        QString className = match.captured(3); // Class-specific selector
+        QString classStyles = match.captured(4);
+
+        if (!objectName.isEmpty()) {
+            // Special handling for parent widget (if it's identified as #TestWindow)
+            if (objectName == parent->objectName()) {
+                parent->setStyleSheet(objectStyles.trimmed());
+            } else {
+                QWidget* widget = parent->findChild<QWidget*>(objectName);
+                if (widget) {
+                    widget->setStyleSheet(objectStyles.trimmed());
+                }
+            }
+        } else if (!className.isEmpty()) {
+            // Apply styles to all widgets of the given class
+            QList<QWidget*> widgets = parent->findChildren<QWidget*>(className);
+            for (QWidget* widget : widgets) {
+                widget->setStyleSheet(classStyles.trimmed());
+            }
+        }
+    }
+
+    return true;
 }

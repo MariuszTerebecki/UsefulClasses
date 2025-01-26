@@ -42,8 +42,6 @@ public:
      */
     bool importQss(const QString& fileName);
 
-private:
-    QWidget* m_parentWidget; ///< The parent widget for QSS operations.
 };
 
 #endif // MTQSS_H
