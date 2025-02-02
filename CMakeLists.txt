@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(UsefulClasses LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools Xml)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools Xml Charts)
 
 qt_standard_project_setup()
 
@@ -14,6 +14,8 @@ qt_add_executable(UsefulClasses
 
     mtsettings.h mtsettings.cpp
     mtqss.h mtqss.cpp
+    chartcomment.h chartcomment.cpp
+    testchart.h testchart.cpp
 )
 
 qt_add_translations(
@@ -26,6 +28,7 @@ target_link_libraries(UsefulClasses
         Qt::Core
         Qt::Widgets
         Qt::Xml
+        Qt::Charts
 )
 
 include(GNUInstallDirs)

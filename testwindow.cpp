@@ -1,8 +1,14 @@
+#include "chartcomment.h"
+#include "testchart.h"
 #include "testwindow.h"
 #include "ui_testwindow.h"
 
+#include <QChartView>
 #include <QFileDialog>
+#include <QLineSeries>
 #include <QMessageBox>
+#include <QValueAxis>
+#include <qchart.h>
 
 TestWindow::TestWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,5 +58,35 @@ void TestWindow::on_actionSaveQSS_triggered()
     }
 
     mtQss->exportQss(fileName);
+}
+
+void TestWindow::testChartComment() {
+
+    // Tworzenie wykresu z użyciem klasy TestChart
+    TestChart *chart = new TestChart();
+
+    chart->setTitle("Test wykresu z komentarzem");
+
+    // Tworzenie widoku wykresu
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    // Tworzenie sceny i dodanie komentarza
+    ChartComment *comment = new ChartComment(QPointF(QDateTime::currentDateTime().toMSecsSinceEpoch(), 0), "Komentarz testowy", chart);
+
+    // Ustawienie widoku jako centralnego widżetu
+    this->setCentralWidget(chartView);
+    this->resize(800, 600);
+}
+
+void TestWindow::on_actionChart_Comment_triggered()
+{
+    testChartComment();
+}
+
+
+void TestWindow::on_actionustal_triggered()
+{
+    updateGeometry();
 }
 

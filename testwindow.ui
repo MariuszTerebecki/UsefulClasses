@@ -35,8 +35,16 @@
     <addaction name="actionSaveQSS"/>
     <addaction name="actionLoadQSS"/>
    </widget>
+   <widget class="QMenu" name="menuTests">
+    <property name="title">
+     <string>Tests</string>
+    </property>
+    <addaction name="actionChart_Comment"/>
+    <addaction name="actionustal"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
+   <addaction name="menuTests"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionSaveQSS">
@@ -47,6 +55,16 @@
   <action name="actionLoadQSS">
    <property name="text">
     <string>Load QSS</string>
+   </property>
+  </action>
+  <action name="actionChart_Comment">
+   <property name="text">
+    <string>Chart Comment</string>
+   </property>
+  </action>
+  <action name="actionustal">
+   <property name="text">
+    <string>ustal</string>
    </property>
   </action>
  </widget>

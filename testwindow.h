@@ -22,8 +22,14 @@ private slots:
     void on_actionLoad_QSS_triggered();
     void on_actionSaveQSS_triggered();
 
+    void on_actionChart_Comment_triggered();
+
+    void on_actionustal_triggered();
+
 private:
     Ui::TestWindow *ui;
     MTQss *mtQss;
+
+    void testChartComment();
 };
 #endif // TESTWINDOW_H
